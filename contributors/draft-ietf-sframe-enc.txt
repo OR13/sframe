@@ -2899,9 +2899,14 @@ ct: 990123456794f509d36e9beacb0e261d99c7d1e972f1fed787d4049f17ca21353c1cc24d56ce
 
 Contributors
 
-   Raphael Robert
-   Phoenix R&D
-   Email: ietf@raphaelrobert.com
+   Frederic Jacobs
+   Apple
+   Email: frederic.jacobs@apple.com
+
+
+   Marta Mularczyk
+   Amazon
+   Email: mulmarta@amazon.com
 
 
    Suhas Nandakumar
@@ -2914,9 +2919,9 @@ Contributors
    Email: trigaux@cisco.com
 
 
-   Marta Mularczyk
-   Amazon
-   Email: mulmarta@amazon.com
+   Raphael Robert
+   Phoenix R&D
+   Email: ietf@raphaelrobert.com
 
 
 Authors' Addresses
