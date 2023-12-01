@@ -2385,6 +2385,14 @@ promptly.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
 (a) the current sender key for that sender and (b) the current KID value for the
 sender. Evicting a participant requires each sender to send a fresh sender key
 to all receivers.<a href="#section-5.1-9" class="pilcrow">¶</a></p>
+<p id="section-5.1-10">It is up to the application to decide when sender keys are updated.  A sender
+key may be updated by sending a new <code>base_key</code> (updating the key generation) or
+by hashing the current <code>base_key</code> (updating the ratchet step).  Ratcheting the
+key forward is useful when adding new receivers to an SFrame-based interaction,
+since it assures that the new receivers can't decrypt any media encrypted before
+they were added.  If a sender wishes to assure the opposite property when
+removing a receiver (i.e., ensuring that the receiver can't decrypt media after
+they are removed), then the sender will need to distribute a new sender key.<a href="#section-5.1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="mls">
