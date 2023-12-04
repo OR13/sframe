@@ -5,14 +5,14 @@
 Network Working Group                                           E. Omara
 Internet-Draft                                                     Apple
 Intended status: Standards Track                               J. Uberti
-Expires: 22 May 2024                                              Google
+Expires: 6 June 2024                                              Google
                                                               S. Murillo
                                                           CoSMo Software
                                                        R. L. Barnes, Ed.
                                                                    Cisco
                                                                Y. Fablet
                                                                    Apple
-                                                        19 November 2023
+                                                         4 December 2023
 
 
                          Secure Frame (SFrame)
@@ -63,7 +63,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 May 2024.
+   This Internet-Draft will expire on 6 June 2024.
 
 Copyright Notice
 
@@ -1081,7 +1081,7 @@ Alice |            (per-frame)         (per-packet)   |        |        |
    included in the RTP header extension.  Suppose the application also
    includes this application data in the SFrame metadata, so that the
    SFU is allowed to read, but not modify the application data.  A
-   receiver MAY use the application data in the RTP header extension as
+   receiver can use the application data in the RTP header extension as
    part of the standard SRTP decryption process, since this is required
    to recover the SFrame ciphertext carried in the SRTP payload.
    However, the receiver MUST NOT use the application data for other
