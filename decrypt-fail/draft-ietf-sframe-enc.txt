@@ -566,8 +566,6 @@ Alice |            (per-frame)         (per-packet)   |        |        |
 
                          Figure 4: Encryption flow
 
-   [[ TODO: Text about obeying AEAD limits ]]
-
 4.4.4.  Decryption
 
    Before decrypting, a client needs to assemble a full SFrame
