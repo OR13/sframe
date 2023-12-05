@@ -5,14 +5,14 @@
 Network Working Group                                           E. Omara
 Internet-Draft                                                     Apple
 Intended status: Standards Track                               J. Uberti
-Expires: 6 June 2024                                              Google
+Expires: 7 June 2024                                              Google
                                                               S. Murillo
                                                           CoSMo Software
                                                        R. L. Barnes, Ed.
                                                                    Cisco
                                                                Y. Fablet
                                                                    Apple
-                                                         4 December 2023
+                                                         5 December 2023
 
 
                          Secure Frame (SFrame)
@@ -63,7 +63,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 June 2024.
+   This Internet-Draft will expire on 7 June 2024.
 
 Copyright Notice
 
@@ -259,40 +259,40 @@ Table of Contents
    object's semantics.  SFrame does not provide this agreement; it must
    be arranged by the application.
 
-      +--------------------------------------------------------+
-      |                                                        |
-      |  +----------+      +-------------+      +-----------+  |
- .-.  |  |          |      |             |      |    HBH    |  |
-|   | |  |  Encode  |----->|  Packetize  |----->|  Protect  |-----------+
- '+'  |  |          |   ^  |             |  ^   |           |  |        |
- /|\  |  +----------+   |  +-------------+  |   +-----------+  |        |
-/ + \ |                 |                   |         ^        |        |
- / \  |              SFrame              SFrame       |        |        |
-/   \ |              Protect             Protect      |        |        |
-Alice |            (per-frame)         (per-packet)   |        |        |
-      |                 ^                   ^         |        |        |
-      |                 |                   |         |        |        |
-      +-----------------|-------------------|---------|--------+        |
-                        |                   |         |                 v
-                        |                   |         |             +---+----+
-                        |      E2E Key      |         | HBH Key     | Media  |
-                        +---- Management ---+         | Management  | Server |
-                        |                   |         |             +---+----+
-                        |                   |         |                 |
-      +-----------------|-------------------|---------|--------+        |
-      |                 |                   |         |        |        |
-      |                 V                   V         |        |        |
- .-.  |              SFrame               SFrame      |        |        |
-|   | |             Unprotect            Unprotect    |        |        |
- '+'  |            (per-frame)          (per-packet)  |        |        |
- /|\  |                 |                    |        V        |        |
-/ + \ |  +----------+   |  +-------------+   |  +-----------+  |        |
- / \  |  |          |   V  |             |   V  |    HBH    |  |        |
-/   \ |  |  Decode  |<-----| Depacketize |<-----| Unprotect |<----------+
- Bob  |  |          |      |             |      |           |  |
-      |  +----------+      +-------------+      +-----------+  |
-      |                                                        |
-      +--------------------------------------------------------+
+      +------------------------------------------------------+
+      |                                                      |
+      |  +--------+      +-------------+      +-----------+  |
+ .-.  |  |        |      |             |      |    HBH    |  |
+|   | |  | Encode |----->|  Packetize  |----->|  Protect  |----------+
+ '+'  |  |        |   ^  |             |  ^   |           |  |       |
+ /|\  |  +--------+   |  +-------------+  |   +-----------+  |       |
+/ + \ |               |                   |         ^        |       |
+ / \  |            SFrame              SFrame       |        |       |
+/   \ |            Protect             Protect      |        |       |
+Alice |          (per-frame)         (per-packet)   |        |       |
+      |               ^                   ^         |        |       |
+      |               |                   |         |        |       |
+      +---------------|-------------------|---------|--------+       |
+                      |                   |         |                v
+                      |                   |         |         +------+-+
+                      |      E2E Key      |       HBH Key     | Media  |
+                      +---- Management ---+      Management   | Server |
+                      |                   |         |         +------+-+
+                      |                   |         |                |
+      +---------------|-------------------|---------|--------+       |
+      |               |                   |         |        |       |
+      |               V                   V         |        |       |
+ .-.  |            SFrame               SFrame      |        |       |
+|   | |           Unprotect            Unprotect    |        |       |
+ '+'  |          (per-frame)          (per-packet)  |        |       |
+ /|\  |               |                    |        V        |       |
+/ + \ |  +--------+   |  +-------------+   |  +-----------+  |       |
+ / \  |  |        |   V  |             |   V  |    HBH    |  |       |
+/   \ |  | Decode |<-----| Depacketize |<-----| Unprotect |<---------+
+ Bob  |  |        |      |             |      |           |  |
+      |  +--------+      +-------------+      +-----------+  |
+      |                                                      |
+      +------------------------------------------------------+
 
                                Figure 1
 
