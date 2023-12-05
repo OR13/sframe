@@ -566,6 +566,7 @@ Alice |            (per-frame)         (per-packet)   |        |        |
        |                                     |
        |                                AEAD.Encrypt
        |                                     |
+       |               SFrame Ciphertext     |
        |               +---------------+     |
        +-------------->| SFrame Header |     |
                        +---------------+     |
@@ -576,7 +577,7 @@ Alice |            (per-frame)         (per-packet)   |        |        |
                        |               |
                        +---------------+
 
-                         Figure 4: Encryption flow
+                 Figure 4: Encrypting an SFrame Ciphertext
 
 4.4.4.  Decryption
 
@@ -612,6 +613,7 @@ Alice |            (per-frame)         (per-packet)   |        |        |
    in a way that is indistinguishable (to an external observer) from
    having processed a valid ciphertext.
 
+                       SFrame Ciphertext
                        +---------------+
        +---------------| SFrame Header |
        |               +---------------+
@@ -649,7 +651,7 @@ Alice |            (per-frame)         (per-packet)   |        |        |
                                      |               |
                                      +---------------+
 
-                         Figure 5: Decryption flow
+                 Figure 5: Decrypting an SFrame Ciphertext
 
 4.5.  Cipher Suites
 
