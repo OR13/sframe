@@ -2987,12 +2987,13 @@ order for SFrame to operate securely.<a href="#section-9-1" class="pilcrow">¶</
         <h3 id="name-header-value-uniqueness">
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-header-value-uniqueness" class="section-name selfRef">Header Value Uniqueness</a>
         </h3>
-<p id="section-9.1-1">Applications MUST ensure that each (KID, CTR) combination is used for at most
-one SFrame encryption operation. Typically this is done by assigning each sender
-a KID or set of KIDs, then having each sender use the CTR field as a monotonic
-counter, incrementing for each plaintext that is encrypted. In addition to its
-simplicity, this scheme minimizes overhead by keeping CTR values as small as
-possible.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-1">Applications MUST ensure that each (<code>base_key</code>, KID, CTR) combination is used
+for at most one SFrame encryption operation. This ensures that the (key, nonce)
+pairs used by the underlying AEAD algorithm are never reused. Typically this is
+done by assigning each sender a KID or set of KIDs, then having each sender use
+the CTR field as a monotonic counter, incrementing for each plaintext that is
+encrypted. In addition to its simplicity, this scheme minimizes overhead by
+keeping CTR values as small as possible.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="key-management-framework">
