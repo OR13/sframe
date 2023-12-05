@@ -2035,72 +2035,76 @@ authenticated when SFrame is applied per-frame.  After encoding the frame and
 before packetizing it, the necessary media metadata will be moved out of the
 encoded frame buffer, to be sent in some channel visible to the SFU (e.g., an
 RTP header extension).<a href="#section-4.4.3-4" class="pilcrow">¶</a></p>
-<span id="name-encryption-flow"></span><figure id="figure-4">
+<span id="name-encrypting-an-sframe-cipher"></span><figure id="figure-4">
             <div id="section-4.4.3-5.1">
               <div class="alignLeft art-svg artwork" id="section-4.4.3-5.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="528" width="328" viewBox="0 0 328 528" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                  <path d="M 8,176 L 8,336" fill="none" stroke="black"></path>
-                  <path d="M 32,32 L 32,64" fill="none" stroke="black"></path>
-                  <path d="M 32,344 L 32,400" fill="none" stroke="black"></path>
-                  <path d="M 56,176 L 56,336" fill="none" stroke="black"></path>
-                  <path d="M 80,224 L 80,256" fill="none" stroke="black"></path>
-                  <path d="M 80,384 L 80,512" fill="none" stroke="black"></path>
-                  <path d="M 96,64 L 96,160" fill="none" stroke="black"></path>
-                  <path d="M 168,32 L 168,64" fill="none" stroke="black"></path>
-                  <path d="M 192,32 L 192,128" fill="none" stroke="black"></path>
-                  <path d="M 208,384 L 208,512" fill="none" stroke="black"></path>
-                  <path d="M 232,256 L 232,288" fill="none" stroke="black"></path>
-                  <path d="M 256,128 L 256,448" fill="none" stroke="black"></path>
-                  <path d="M 320,32 L 320,128" fill="none" stroke="black"></path>
-                  <path d="M 32,32 L 168,32" fill="none" stroke="black"></path>
-                  <path d="M 192,32 L 320,32" fill="none" stroke="black"></path>
-                  <path d="M 32,64 L 168,64" fill="none" stroke="black"></path>
-                  <path d="M 192,128 L 320,128" fill="none" stroke="black"></path>
-                  <path d="M 64,160 L 248,160" fill="none" stroke="black"></path>
-                  <path d="M 8,176 L 56,176" fill="none" stroke="black"></path>
-                  <path d="M 8,208 L 56,208" fill="none" stroke="black"></path>
-                  <path d="M 56,224 L 104,224" fill="none" stroke="black"></path>
-                  <path d="M 208,224 L 248,224" fill="none" stroke="black"></path>
-                  <path d="M 80,256 L 104,256" fill="none" stroke="black"></path>
-                  <path d="M 216,256 L 232,256" fill="none" stroke="black"></path>
-                  <path d="M 8,272 L 56,272" fill="none" stroke="black"></path>
-                  <path d="M 56,288 L 248,288" fill="none" stroke="black"></path>
-                  <path d="M 8,336 L 56,336" fill="none" stroke="black"></path>
-                  <path d="M 80,384 L 208,384" fill="none" stroke="black"></path>
-                  <path d="M 32,400 L 72,400" fill="none" stroke="black"></path>
-                  <path d="M 80,416 L 208,416" fill="none" stroke="black"></path>
-                  <path d="M 216,448 L 256,448" fill="none" stroke="black"></path>
-                  <path d="M 80,512 L 208,512" fill="none" stroke="black"></path>
-                  <polygon class="arrowhead" points="256,288 244,282.4 244,293.6" fill="black" transform="rotate(0,248,288)"></polygon>
-                  <polygon class="arrowhead" points="256,224 244,218.4 244,229.6" fill="black" transform="rotate(0,248,224)"></polygon>
-                  <polygon class="arrowhead" points="256,160 244,154.4 244,165.6" fill="black" transform="rotate(0,248,160)"></polygon>
-                  <polygon class="arrowhead" points="224,448 212,442.4 212,453.6" fill="black" transform="rotate(180,216,448)"></polygon>
-                  <polygon class="arrowhead" points="112,256 100,250.4 100,261.6" fill="black" transform="rotate(0,104,256)"></polygon>
-                  <polygon class="arrowhead" points="112,224 100,218.4 100,229.6" fill="black" transform="rotate(0,104,224)"></polygon>
-                  <polygon class="arrowhead" points="80,400 68,394.4 68,405.6" fill="black" transform="rotate(0,72,400)"></polygon>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="608" width="416" viewBox="0 0 416 608" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                  <path d="M 40,224 L 40,480" fill="none" stroke="black"></path>
+                  <path d="M 64,176 L 64,272" fill="none" stroke="black"></path>
+                  <path d="M 96,160 L 96,288" fill="none" stroke="black"></path>
+                  <path d="M 128,320 L 128,352" fill="none" stroke="black"></path>
+                  <path d="M 144,160 L 144,288" fill="none" stroke="black"></path>
+                  <path d="M 168,176 L 168,208" fill="none" stroke="black"></path>
+                  <path d="M 168,464 L 168,592" fill="none" stroke="black"></path>
+                  <path d="M 192,352 L 192,384" fill="none" stroke="black"></path>
+                  <path d="M 264,320 L 264,352" fill="none" stroke="black"></path>
+                  <path d="M 280,32 L 280,128" fill="none" stroke="black"></path>
+                  <path d="M 296,464 L 296,592" fill="none" stroke="black"></path>
+                  <path d="M 320,208 L 320,240" fill="none" stroke="black"></path>
+                  <path d="M 344,128 L 344,400" fill="none" stroke="black"></path>
+                  <path d="M 344,432 L 344,528" fill="none" stroke="black"></path>
+                  <path d="M 408,32 L 408,128" fill="none" stroke="black"></path>
+                  <path d="M 280,32 L 408,32" fill="none" stroke="black"></path>
+                  <path d="M 280,128 L 408,128" fill="none" stroke="black"></path>
+                  <path d="M 96,160 L 144,160" fill="none" stroke="black"></path>
+                  <path d="M 144,176 L 192,176" fill="none" stroke="black"></path>
+                  <path d="M 296,176 L 336,176" fill="none" stroke="black"></path>
+                  <path d="M 168,208 L 192,208" fill="none" stroke="black"></path>
+                  <path d="M 304,208 L 320,208" fill="none" stroke="black"></path>
+                  <path d="M 40,224 L 64,224" fill="none" stroke="black"></path>
+                  <path d="M 96,224 L 144,224" fill="none" stroke="black"></path>
+                  <path d="M 144,240 L 336,240" fill="none" stroke="black"></path>
+                  <path d="M 96,288 L 144,288" fill="none" stroke="black"></path>
+                  <path d="M 128,320 L 264,320" fill="none" stroke="black"></path>
+                  <path d="M 128,352 L 264,352" fill="none" stroke="black"></path>
+                  <path d="M 40,384 L 336,384" fill="none" stroke="black"></path>
+                  <path d="M 168,464 L 296,464" fill="none" stroke="black"></path>
+                  <path d="M 40,480 L 160,480" fill="none" stroke="black"></path>
+                  <path d="M 168,496 L 296,496" fill="none" stroke="black"></path>
+                  <path d="M 304,528 L 344,528" fill="none" stroke="black"></path>
+                  <path d="M 168,592 L 296,592" fill="none" stroke="black"></path>
+                  <path d="M 80,160 C 71.16936,160 64,167.16936 64,176" fill="none" stroke="black"></path>
+                  <path d="M 80,288 C 71.16936,288 64,280.83064 64,272" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="344,384 332,378.4 332,389.6" fill="black" transform="rotate(0,336,384)"></polygon>
+                  <polygon class="arrowhead" points="344,240 332,234.4 332,245.6" fill="black" transform="rotate(0,336,240)"></polygon>
+                  <polygon class="arrowhead" points="344,176 332,170.4 332,181.6" fill="black" transform="rotate(0,336,176)"></polygon>
+                  <polygon class="arrowhead" points="312,528 300,522.4 300,533.6" fill="black" transform="rotate(180,304,528)"></polygon>
+                  <polygon class="arrowhead" points="200,208 188,202.4 188,213.6" fill="black" transform="rotate(0,192,208)"></polygon>
+                  <polygon class="arrowhead" points="200,176 188,170.4 188,181.6" fill="black" transform="rotate(0,192,176)"></polygon>
+                  <polygon class="arrowhead" points="168,480 156,474.4 156,485.6" fill="black" transform="rotate(0,160,480)"></polygon>
                   <g class="text">
-                    <text x="100" y="52">metadata</text>
-                    <text x="256" y="84">plaintext</text>
-                    <text x="28" y="164">header</text>
-                    <text x="280" y="164">AAD</text>
-                    <text x="32" y="196">S</text>
-                    <text x="32" y="228">KID</text>
-                    <text x="156" y="228">sframe_key</text>
-                    <text x="280" y="228">Key</text>
-                    <text x="160" y="260">sframe_salt</text>
-                    <text x="32" y="292">CTR</text>
-                    <text x="288" y="292">Nonce</text>
-                    <text x="236" y="356">AEAD</text>
-                    <text x="288" y="356">Encrypt</text>
-                    <text x="116" y="404">SFrame</text>
-                    <text x="172" y="404">Header</text>
-                    <text x="148" y="468">ciphertext</text>
+                    <text x="344" y="84">plaintext</text>
+                    <text x="244" y="180">sframe_key</text>
+                    <text x="368" y="180">Key</text>
+                    <text x="28" y="196">Header</text>
+                    <text x="120" y="196">KID</text>
+                    <text x="248" y="212">sframe_salt</text>
+                    <text x="376" y="244">Nonce</text>
+                    <text x="120" y="260">CTR</text>
+                    <text x="196" y="340">metadata</text>
+                    <text x="368" y="388">AAD</text>
+                    <text x="348" y="420">AEAD.Encrypt</text>
+                    <text x="188" y="452">SFrame</text>
+                    <text x="260" y="452">Ciphertext</text>
+                    <text x="204" y="484">SFrame</text>
+                    <text x="260" y="484">Header</text>
+                    <text x="236" y="548">ciphertext</text>
                   </g>
                 </svg><a href="#section-4.4.3-5.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
-<a href="#name-encryption-flow" class="selfRef">Encryption flow</a>
+<a href="#name-encrypting-an-sframe-cipher" class="selfRef">Encrypting an SFrame Ciphertext</a>
             </figcaption></figure>
 </section>
 </div>
@@ -2139,6 +2143,77 @@ once a key with that KID is received.  If a ciphertext fails to decrypt for any
 other reason, the client MUST discard the ciphertext. Invalid ciphertexts SHOULD be
 discarded in a way that is indistinguishable (to an external observer) from having
 processed a valid ciphertext.<a href="#section-4.4.4-4" class="pilcrow">¶</a></p>
+<span id="name-decrypting-an-sframe-cipher"></span><figure id="figure-5">
+            <div id="section-4.4.4-5.1">
+              <div class="alignLeft art-svg artwork" id="section-4.4.4-5.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="640" width="384" viewBox="0 0 384 640" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                  <path d="M 8,64 L 8,432" fill="none" stroke="black"></path>
+                  <path d="M 32,224 L 32,320" fill="none" stroke="black"></path>
+                  <path d="M 64,208 L 64,336" fill="none" stroke="black"></path>
+                  <path d="M 96,368 L 96,400" fill="none" stroke="black"></path>
+                  <path d="M 112,208 L 112,336" fill="none" stroke="black"></path>
+                  <path d="M 136,48 L 136,176" fill="none" stroke="black"></path>
+                  <path d="M 136,224 L 136,256" fill="none" stroke="black"></path>
+                  <path d="M 160,400 L 160,432" fill="none" stroke="black"></path>
+                  <path d="M 232,368 L 232,400" fill="none" stroke="black"></path>
+                  <path d="M 248,512 L 248,608" fill="none" stroke="black"></path>
+                  <path d="M 264,48 L 264,176" fill="none" stroke="black"></path>
+                  <path d="M 288,256 L 288,288" fill="none" stroke="black"></path>
+                  <path d="M 312,112 L 312,448" fill="none" stroke="black"></path>
+                  <path d="M 312,496 L 312,504" fill="none" stroke="black"></path>
+                  <path d="M 376,512 L 376,608" fill="none" stroke="black"></path>
+                  <path d="M 136,48 L 264,48" fill="none" stroke="black"></path>
+                  <path d="M 8,64 L 128,64" fill="none" stroke="black"></path>
+                  <path d="M 136,80 L 264,80" fill="none" stroke="black"></path>
+                  <path d="M 272,112 L 312,112" fill="none" stroke="black"></path>
+                  <path d="M 136,176 L 264,176" fill="none" stroke="black"></path>
+                  <path d="M 64,208 L 112,208" fill="none" stroke="black"></path>
+                  <path d="M 112,224 L 160,224" fill="none" stroke="black"></path>
+                  <path d="M 264,224 L 304,224" fill="none" stroke="black"></path>
+                  <path d="M 136,256 L 160,256" fill="none" stroke="black"></path>
+                  <path d="M 272,256 L 288,256" fill="none" stroke="black"></path>
+                  <path d="M 8,272 L 24,272" fill="none" stroke="black"></path>
+                  <path d="M 64,272 L 112,272" fill="none" stroke="black"></path>
+                  <path d="M 112,288 L 304,288" fill="none" stroke="black"></path>
+                  <path d="M 64,336 L 112,336" fill="none" stroke="black"></path>
+                  <path d="M 96,368 L 232,368" fill="none" stroke="black"></path>
+                  <path d="M 96,400 L 232,400" fill="none" stroke="black"></path>
+                  <path d="M 8,432 L 304,432" fill="none" stroke="black"></path>
+                  <path d="M 248,512 L 376,512" fill="none" stroke="black"></path>
+                  <path d="M 248,608 L 376,608" fill="none" stroke="black"></path>
+                  <path d="M 48,208 C 39.16936,208 32,215.16936 32,224" fill="none" stroke="black"></path>
+                  <path d="M 48,336 C 39.16936,336 32,328.83064 32,320" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="320,504 308,498.4 308,509.6" fill="black" transform="rotate(90,312,504)"></polygon>
+                  <polygon class="arrowhead" points="312,432 300,426.4 300,437.6" fill="black" transform="rotate(0,304,432)"></polygon>
+                  <polygon class="arrowhead" points="312,288 300,282.4 300,293.6" fill="black" transform="rotate(0,304,288)"></polygon>
+                  <polygon class="arrowhead" points="312,224 300,218.4 300,229.6" fill="black" transform="rotate(0,304,224)"></polygon>
+                  <polygon class="arrowhead" points="168,256 156,250.4 156,261.6" fill="black" transform="rotate(0,160,256)"></polygon>
+                  <polygon class="arrowhead" points="168,224 156,218.4 156,229.6" fill="black" transform="rotate(0,160,224)"></polygon>
+                  <polygon class="arrowhead" points="32,272 20,266.4 20,277.6" fill="black" transform="rotate(0,24,272)"></polygon>
+                  <g class="text">
+                    <text x="156" y="36">SFrame</text>
+                    <text x="228" y="36">Ciphertext</text>
+                    <text x="172" y="68">SFrame</text>
+                    <text x="228" y="68">Header</text>
+                    <text x="204" y="132">ciphertext</text>
+                    <text x="212" y="228">sframe_key</text>
+                    <text x="336" y="228">Key</text>
+                    <text x="88" y="244">KID</text>
+                    <text x="216" y="260">sframe_salt</text>
+                    <text x="344" y="292">Nonce</text>
+                    <text x="88" y="308">CTR</text>
+                    <text x="164" y="388">metadata</text>
+                    <text x="336" y="436">AAD</text>
+                    <text x="316" y="468">AEAD.Decrypt</text>
+                    <text x="312" y="484">|</text>
+                    <text x="312" y="564">plaintext</text>
+                  </g>
+                </svg><a href="#section-4.4.4-5.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-decrypting-an-sframe-cipher" class="selfRef">Decrypting an SFrame Ciphertext</a>
+            </figcaption></figure>
 </section>
 </div>
 </section>
@@ -2354,7 +2429,7 @@ KID = (key_generation &lt;&lt; R) + (ratchet_step % (1 &lt;&lt; R))
 </pre><a href="#section-5.1-6" class="pilcrow">¶</a>
 </div>
 <span id="name-structure-of-a-kid-in-the-s"></span><div id="sender-keys-kid">
-<figure id="figure-5">
+<figure id="figure-6">
           <div id="section-5.1-7.1">
             <div class="alignLeft art-svg artwork" id="section-5.1-7.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="112" width="280" viewBox="0 0 280 112" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
@@ -2382,7 +2457,7 @@ KID = (key_generation &lt;&lt; R) + (ratchet_step % (1 &lt;&lt; R))
               </svg><a href="#section-5.1-7.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-structure-of-a-kid-in-the-s" class="selfRef">Structure of a KID in the Sender Keys scheme</a>
           </figcaption></figure>
 </div>
@@ -2448,7 +2523,7 @@ KID = (context &lt;&lt; (S + E)) + (sender_index &lt;&lt; E) + (epoch % (1 &lt;&
 </pre><a href="#section-5.2-7" class="pilcrow">¶</a>
 </div>
 <span id="name-structure-of-a-kid-for-an-m"></span><div id="mls-kid">
-<figure id="figure-6">
+<figure id="figure-7">
           <div id="section-5.2-8.1">
             <div class="alignLeft art-svg artwork" id="section-5.2-8.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="112" width="264" viewBox="0 0 264 112" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
@@ -2482,7 +2557,7 @@ KID = (context &lt;&lt; (S + E)) + (sender_index &lt;&lt; E) + (epoch % (1 &lt;&
               </svg><a href="#section-5.2-8.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-structure-of-a-kid-for-an-m" class="selfRef">Structure of a KID for an MLS Sender</a>
           </figcaption></figure>
 </div>
@@ -2491,7 +2566,7 @@ epoch, it can compute the required KID values on demand (as well as the
 resulting SFrame keys/nonces derived from the <code>base_key</code> and KID), as it needs
 to encrypt or decrypt for a given member.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
 <span id="name-an-example-sequence-of-kids"></span><div id="mls-evolution">
-<figure id="figure-7">
+<figure id="figure-8">
           <div id="section-5.2-10.1">
             <div class="alignLeft art-svg artwork" id="section-5.2-10.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="448" width="472" viewBox="0 0 472 448" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
@@ -2586,7 +2661,7 @@ to encrypt or decrypt for a given member.<a href="#section-5.2-9" class="pilcrow
               </svg><a href="#section-5.2-10.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
 <a href="#name-an-example-sequence-of-kids" class="selfRef">An example sequence of KIDs for an MLS-based SFrame session (E=4; S=6, allowing for 64 group members)</a>
           </figcaption></figure>
 </div>
@@ -3123,10 +3198,10 @@ including the specified metadata.<a href="#appendix-B-5.4.1" class="pilcrow">¶<
 and CTR values specified in the SFrame Header, and the provided metadata.<a href="#appendix-B-5.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="appendix-B-6"><a href="#rust-api" class="auto internal xref">Figure 8</a> shows an example of the types of structures and methods that could
+<p id="appendix-B-6"><a href="#rust-api" class="auto internal xref">Figure 9</a> shows an example of the types of structures and methods that could
 be used to create an SFrame API in Rust.<a href="#appendix-B-6" class="pilcrow">¶</a></p>
 <span id="name-an-example-sframe-api"></span><div id="rust-api">
-<figure id="figure-8">
+<figure id="figure-9">
         <div class="lang-rust sourcecode" id="appendix-B-7.1">
 <pre>
 type KeyId = u64;
@@ -3160,7 +3235,7 @@ trait SFrameContextMethods {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
 <a href="#name-an-example-sframe-api" class="selfRef">An Example SFrame API</a>
         </figcaption></figure>
 </div>
@@ -3519,10 +3594,10 @@ that would need to be overcome.<a href="#appendix-C.5-1" class="pilcrow">¶</a><
 integrating SFrame into an application: applying SFrame per-frame or per-packet.
 In RTP-based applications, applying SFrame per-packet means that the payload of
 each RTP packet will be an SFrame ciphertext, starting with an SFrame Header, as
-shown in <a href="#sframe-packet" class="auto internal xref">Figure 9</a>.  Applying SFrame per-frame means that different
+shown in <a href="#sframe-packet" class="auto internal xref">Figure 10</a>.  Applying SFrame per-frame means that different
 RTP payloads will have different formats: The first payload of a frame will
 contain the SFrame headers, and subsequent payloads will contain further chunks
-of the ciphertext, as shown in <a href="#sframe-multi-packet" class="auto internal xref">Figure 10</a>.<a href="#appendix-C.5-2" class="pilcrow">¶</a></p>
+of the ciphertext, as shown in <a href="#sframe-multi-packet" class="auto internal xref">Figure 11</a>.<a href="#appendix-C.5-2" class="pilcrow">¶</a></p>
 <p id="appendix-C.5-3">In order for these media payloads to be properly interpreted by receivers,
 receivers will need to be configured to know which of the above schemes the
 sender has  applied to a given sequence of RTP packets. SFrame does not provide
@@ -3536,7 +3611,7 @@ ciphertext (except for the SFrame header).  In order for such a generic
 packetization scheme to work interoperably one would have to be defined, e.g.,
 as proposed in <span>[<a href="#I-D.codec-agnostic-rtp-payload-format" class="cite xref">I-D.codec-agnostic-rtp-payload-format</a>]</span>.<a href="#appendix-C.5-4" class="pilcrow">¶</a></p>
 <span id="name-srtp-packet-with-sframe-pro"></span><div id="sframe-packet">
-<figure id="figure-9">
+<figure id="figure-10">
           <div id="appendix-C.5-5.1">
             <div class="alignLeft art-svg artwork" id="appendix-C.5-5.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="384" width="576" viewBox="0 0 576 384" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
@@ -3609,12 +3684,12 @@ as proposed in <span>[<a href="#I-D.codec-agnostic-rtp-payload-format" class="ci
               </svg><a href="#appendix-C.5-5.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
 <a href="#name-srtp-packet-with-sframe-pro" class="selfRef">SRTP packet with SFrame-protected payload</a>
           </figcaption></figure>
 </div>
 <span id="name-encryption-flow-with-per-fr"></span><div id="sframe-multi-packet">
-<figure id="figure-10">
+<figure id="figure-11">
           <div id="appendix-C.5-6.1">
             <div class="alignLeft art-svg artwork" id="appendix-C.5-6.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="624" width="504" viewBox="0 0 504 624" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
@@ -3689,7 +3764,7 @@ as proposed in <span>[<a href="#I-D.codec-agnostic-rtp-payload-format" class="ci
               </svg><a href="#appendix-C.5-6.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
 <a href="#name-encryption-flow-with-per-fr" class="selfRef">Encryption flow with per-frame encryption for RTP</a>
           </figcaption></figure>
 </div>

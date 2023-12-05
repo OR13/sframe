@@ -539,39 +539,44 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    metadata will be moved out of the encoded frame buffer, to be sent in
    some channel visible to the SFU (e.g., an RTP header extension).
 
-      +----------------+  +---------------+
-      |    metadata    |  |               |
-      +-------+--------+  |               |
-              |           |   plaintext   |
-              |           |               |
-              |           |               |
-              |           +-------+-------+
-              |                   |
-   header ----+------------------>| AAD
-   +-----+                        |
-   |  S  |                        |
-   +-----+                        |
-   | KID +--+--> sframe_key ----->| Key
-   |     |  |                     |
-   |     |  +--> sframe_salt --+  |
-   +-----+                     |  |
-   | CTR +---------------------+->| Nonce
-   |     |                        |
-   |     |                        |
-   +-----+                        |
-      |                       AEAD.Encrypt
-      |                           |
-      |     +---------------+     |
-      +---->| SFrame Header |     |
-            +---------------+     |
-            |               |     |
-            |               |<----+
-            |   ciphertext  |
-            |               |
-            |               |
-            +---------------+
+                                     +---------------+
+                                     |               |
+                                     |               |
+                                     |   plaintext   |
+                                     |               |
+                                     |               |
+                                     +-------+-------+
+                                             |
+           .- +-----+                        |
+          |   |     +--+--> sframe_key ----->| Key
+   Header |   | KID |  |                     |
+          |   |     |  +--> sframe_salt --+  |
+       +--+   +-----+                     |  |
+       |  |   |     +---------------------+->| Nonce
+       |  |   | CTR |                        |
+       |  |   |     |                        |
+       |   '- +-----+                        |
+       |                                     |
+       |          +----------------+         |
+       |          |    metadata    |         |
+       |          +-------+--------+         |
+       |                  |                  |
+       +------------------+----------------->| AAD
+       |                                     |
+       |                                AEAD.Encrypt
+       |                                     |
+       |               SFrame Ciphertext     |
+       |               +---------------+     |
+       +-------------->| SFrame Header |     |
+                       +---------------+     |
+                       |               |     |
+                       |               |<----+
+                       |   ciphertext  |
+                       |               |
+                       |               |
+                       +---------------+
 
-                         Figure 4: Encryption flow
+                 Figure 4: Encrypting an SFrame Ciphertext
 
 4.4.4.  Decryption
 
@@ -606,6 +611,46 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    MUST discard the ciphertext.  Invalid ciphertexts SHOULD be discarded
    in a way that is indistinguishable (to an external observer) from
    having processed a valid ciphertext.
+
+                       SFrame Ciphertext
+                       +---------------+
+       +---------------| SFrame Header |
+       |               +---------------+
+       |               |               |
+       |               |               |-----+
+       |               |   ciphertext  |     |
+       |               |               |     |
+       |               |               |     |
+       |               +---------------+     |
+       |                                     |
+       |   .- +-----+                        |
+       |  |   |     +--+--> sframe_key ----->| Key
+       |  |   | KID |  |                     |
+       |  |   |     |  +--> sframe_salt --+  |
+       +->+   +-----+                     |  |
+       |  |   |     +---------------------+->| Nonce
+       |  |   | CTR |                        |
+       |  |   |     |                        |
+       |   '- +-----+                        |
+       |                                     |
+       |          +----------------+         |
+       |          |    metadata    |         |
+       |          +-------+--------+         |
+       |                  |                  |
+       +------------------+----------------->| AAD
+                                             |
+                                        AEAD.Decrypt
+                                             |
+                                             V
+                                     +---------------+
+                                     |               |
+                                     |               |
+                                     |   plaintext   |
+                                     |               |
+                                     |               |
+                                     +---------------+
+
+                 Figure 5: Decrypting an SFrame Ciphertext
 
 4.5.  Cipher Suites
 
@@ -759,7 +804,7 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    | Key Generation  | Ratchet Step |
    +-----------------+--------------+
 
-           Figure 5: Structure of a KID in the Sender Keys scheme
+           Figure 6: Structure of a KID in the Sender Keys scheme
 
    The sender signals such a ratchet step update by sending with a KID
    value in which the ratchet step has been incremented.  A receiver who
@@ -830,7 +875,7 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    | Context ID  | Index  | Epoch |
    +-------------+--------+-------+
 
-               Figure 6: Structure of a KID for an MLS Sender
+               Figure 7: Structure of a KID for an MLS Sender
 
    Once an SFrame stack has been provisioned with the
    sframe_epoch_secret for an epoch, it can compute the required KID
@@ -865,7 +910,7 @@ Alice |          (per-frame)         (per-packet)   |        |       |
             |
      ...
 
-       Figure 7: An example sequence of KIDs for an MLS-based SFrame
+       Figure 8: An example sequence of KIDs for an MLS-based SFrame
              session (E=4; S=6, allowing for 64 group members)
 
 6.  Media Considerations
@@ -1310,7 +1355,7 @@ Appendix B.  Example API
       the KID and CTR values specified in the SFrame Header, and the
       provided metadata.
 
-   Figure 8 shows an example of the types of structures and methods that
+   Figure 9 shows an example of the types of structures and methods that
    could be used to create an SFrame API in Rust.
 
    type KeyId = u64;
@@ -1343,7 +1388,7 @@ Appendix B.  Example API
      fn decrypt(&self, metadata: &[u8], ciphertext: &[u8]) -> Vec<u8>;
    }
 
-                      Figure 8: An Example SFrame API
+                      Figure 9: An Example SFrame API
 
 Appendix C.  Overhead Analysis
 
@@ -1526,11 +1571,11 @@ C.5.  SFrame over RTP
    integrating SFrame into an application: applying SFrame per-frame or
    per-packet.  In RTP-based applications, applying SFrame per-packet
    means that the payload of each RTP packet will be an SFrame
-   ciphertext, starting with an SFrame Header, as shown in Figure 9.
+   ciphertext, starting with an SFrame Header, as shown in Figure 10.
    Applying SFrame per-frame means that different RTP payloads will have
    different formats: The first payload of a frame will contain the
    SFrame headers, and subsequent payloads will contain further chunks
-   of the ciphertext, as shown in Figure 10.
+   of the ciphertext, as shown in Figure 11.
 
    In order for these media payloads to be properly interpreted by
    receivers, receivers will need to be configured to know which of the
@@ -1571,7 +1616,7 @@ C.5.  SFrame over RTP
  |                                                                     |
  +--- SRTP Encrypted Portion             SRTP Authenticated Portion ---+
 
-          Figure 9: SRTP packet with SFrame-protected payload
+          Figure 10: SRTP packet with SFrame-protected payload
 
       +----------------+  +---------------+
       | frame metadata |  |               |
@@ -1611,7 +1656,7 @@ C.5.  SFrame over RTP
    |               |      |               |     |               |
    +---------------+      +---------------+     +---------------+
 
-        Figure 10: Encryption flow with per-frame encryption for RTP
+        Figure 11: Encryption flow with per-frame encryption for RTP
 
 Appendix D.  Test Vectors
 
