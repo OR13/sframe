@@ -1258,13 +1258,10 @@ be applied to whole media frames in order to be more bandwidth efficient.<a href
                 <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-key-management-2" class="internal xref">Key Management</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
-                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-authentication-tag-length" class="internal xref">Authentication tag length</a></p>
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-replay" class="internal xref">Replay</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5">
-                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="auto internal xref">7.5</a>.  <a href="#name-replay" class="internal xref">Replay</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.6">
-                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="auto internal xref">7.6</a>.  <a href="#name-risks-due-to-short-tags" class="internal xref">Risks due to Short Tags</a></p>
+                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="auto internal xref">7.5</a>.  <a href="#name-risks-due-to-short-tags" class="internal xref">Risks due to Short Tags</a></p>
 </li>
             </ul>
 </li>
@@ -2414,13 +2411,13 @@ they are removed), then the sender will need to distribute a new sender key.<a h
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-mls" class="section-name selfRef">MLS</a>
         </h3>
 <p id="section-5.2-1">The Messaging Layer Security (MLS) protocol provides group authenticated key
-exchange <span>[<a href="#I-D.ietf-mls-architecture" class="cite xref">I-D.ietf-mls-architecture</a>]</span> <span>[<a href="#I-D.ietf-mls-protocol" class="cite xref">I-D.ietf-mls-protocol</a>]</span>.  In
+exchange <span>[<a href="#MLS-ARCH" class="cite xref">MLS-ARCH</a>]</span> <span>[<a href="#MLS-PROTO" class="cite xref">MLS-PROTO</a>]</span>.  In
 principle, it could be used to instantiate the sender key scheme above, but it
 can also be used more efficiently directly.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.2-2">MLS creates a linear sequence of keys, each of which is shared among the members
 of a group at a given point in time.  When a member joins or leaves the group, a
 new key is produced that is known only to the augmented or reduced group.  Each
-step in the lifetime of the group is know as an "epoch", and each member of the
+step in the lifetime of the group is known as an "epoch", and each member of the
 group is assigned an "index" that is constant for the time they are in the
 group.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.2-3">To generate keys and nonces for SFrame, we use the MLS exporter function to
@@ -2441,9 +2438,9 @@ epochs can be active at a given time.  Receivers MUST be prepared for the epoch
 counter to roll over, removing an old epoch when a new epoch with the same E
 lower bits is introduced.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
 <p id="section-5.2-6">Let <code>S</code> be the number of bits required to encode a member index in the group,
-i.e., the smallest value such that <code>group_size</code> &lt; (1 &lt;&lt; S)<code>.  The sender index
-is encoded in the </code>S<code> bits above the epoch.  The remaining </code>64 - S - E<code> bits of
-the KID value are a </code>context<code> value chosen by the sender (context value </code>0` will
+i.e., the smallest value such that <code>group_size &lt;= (1 &lt;&lt; S)</code>.  The sender index
+is encoded in the <code>S</code> bits above the epoch.  The remaining <code>64 - S - E</code> bits of
+the KID value are a <code>context</code> value chosen by the sender (context value <code>0</code> will
 produce the shortest encoded KID).<a href="#section-5.2-6" class="pilcrow">¶</a></p>
 <div class="lang-pseudocode sourcecode" id="section-5.2-7">
 <pre>
@@ -2590,7 +2587,7 @@ to encrypt or decrypt for a given member.<a href="#section-5.2-9" class="pilcrow
 </div>
 </div>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
-<a href="#name-an-example-sequence-of-kids" class="selfRef">An example sequence of KIDs for an MLS-based SFrame session.  We assume that the group has 64 members, S=6.</a>
+<a href="#name-an-example-sequence-of-kids" class="selfRef">An example sequence of KIDs for an MLS-based SFrame session (E=4; S=6, allowing for 64 group members)</a>
           </figcaption></figure>
 </div>
 </section>
@@ -2607,14 +2604,13 @@ to encrypt or decrypt for a given member.<a href="#section-5.2-9" class="pilcrow
         <h3 id="name-selective-forwarding-units">
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-selective-forwarding-units" class="section-name selfRef">Selective Forwarding Units</a>
         </h3>
-<p id="section-6.1-1">Selective Forwarding Units (SFUs) (e.g., those described in <span><a href="https://rfc-editor.org/rfc/rfc7667#section-3.7" class="relref">Section 3.7</a> of [<a href="#RFC7667" class="cite xref">RFC7667</a>]</span>)
-receive the media streams from each participant and select which ones should be
-forwarded to each of the other participants.  There are several approaches about
-how to do this stream selection but in general, in order to do so, the SFU needs
-to access metadata associated to each frame and modify the RTP information of
-the incoming packets when they are transmitted to the received participants.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.1-2">This section describes how this normal SFU modes of operation interacts with the
-E2EE provided by SFrame<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">Selective Forwarding Units (SFUs) (e.g., those described in <span><a href="https://rfc-editor.org/rfc/rfc7667#section-3.7" class="relref">Section 3.7</a> of [<a href="#RFC7667" class="cite xref">RFC7667</a>]</span>) receive the media streams from each participant and select which
+ones should be forwarded to each of the other participants.  There are several
+approaches for stream selection, but in general, the SFU needs to access
+metadata associated to each frame and modify the RTP information of the incoming
+packets when they are transmitted to the received participants.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">This section describes how this normal SFU modes of operation interact with the
+E2EE provided by SFrame.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <div id="lastn-and-rtp-stream-reuse">
 <section id="section-6.1.1">
           <h4 id="name-lastn-and-rtp-stream-reuse">
@@ -2653,9 +2649,8 @@ frame encryptor and assigned an unique counter for each.<a href="#section-6.1.2-
           </h4>
 <p id="section-6.1.3-1">In both temporal and spatial scalability, the SFU may choose to drop layers in
 order to match a certain bitrate or forward specific media sizes or frames per
-second. In order to support it, the sender MUST encode each spatial layer of a
-given picture in a different frame. That is, an RTP frame may contain more than
-one SFrame encrypted frame with an incrementing frame counter.<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
+second. In order to support the SFU selectively removing layers, the sender MUST
+encapsulate each layer in a different SFrame ciphertext.<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2669,13 +2664,13 @@ one SFrame encrypted frame with an incrementing frame counter.<a href="#section-
 are updated any time a participant joins or leaves the call.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.2-2">The key exchange happens asynchronously and on a different path than the SFU signaling
 and media. So it may happen that when a new participant joins the call and the
-SFU side requests a key frame, the sender generates the e2ee encrypted frame
+SFU side requests a key frame, the sender generates the E2EE frame
 with a key not known by the receiver, so it will be discarded. When the sender
 updates his sending key with the new key, it will send it in a non-key frame, so
 the receiver will be able to decrypt it, but not decode it.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.2-3">Receiver will re-request an key frame then, but due to sender and SFU policies,
-that new key frame could take some time to be generated.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.2-4">If the sender sends a key frame when the new e2ee key is in use, the time
+<p id="section-6.2-3">The new Receiver will then re-request a key frame, but due to sender and SFU
+policies, that new key frame could take some time to be generated.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.2-4">If the sender sends a key frame after the new E2EE key is in use, the time
 required for the new participant to display the video is minimized.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2684,10 +2679,10 @@ required for the new participant to display the video is minimized.<a href="#sec
         <h3 id="name-partial-decoding">
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-partial-decoding" class="section-name selfRef">Partial Decoding</a>
         </h3>
-<p id="section-6.3-1">Some codes support partial decoding, where it can decrypt individual packets
-without waiting for the full frame to arrive, with SFrame this won't be possible
-because the decoder will not access the packets until the entire frame has
-arrived and was decrypted.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-1">Some codecs support partial decoding, where individual packets can be decoded
+without waiting for the full frame to arrive.  When SFrame is applied per-frame,
+this won't be possible because the decoder cannot access data until an entire
+frame has arrived and has been decrypted.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2732,70 +2727,60 @@ SHOULD change their keys when new clients joins or leaves the call for forward
 secrecy and post compromise security.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="authentication-tag-length">
-<section id="section-7.4">
-        <h3 id="name-authentication-tag-length">
-<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-authentication-tag-length" class="section-name selfRef">Authentication tag length</a>
-        </h3>
-<p id="section-7.4-1">The cipher suites defined in this draft use short authentication tags for
-encryption, however it can easily support other ciphers with full authentication
-tag if the short ones are deemed insecure.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="replay">
-<section id="section-7.5">
+<section id="section-7.4">
         <h3 id="name-replay">
-<a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-replay" class="section-name selfRef">Replay</a>
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-replay" class="section-name selfRef">Replay</a>
         </h3>
-<p id="section-7.5-1">The handling of replay is out of the scope of this document. However, senders
+<p id="section-7.4-1">The handling of replay is out of the scope of this document. However, senders
 MUST reject requests to encrypt multiple times with the same key and nonce,
-since several AEAD algorithms fail badly in such cases (see, e.g., <span><a href="https://rfc-editor.org/rfc/rfc5116#section-5.1.1" class="relref">Section 5.1.1</a> of [<a href="#RFC5116" class="cite xref">RFC5116</a>]</span>).<a href="#section-7.5-1" class="pilcrow">¶</a></p>
+since several AEAD algorithms fail badly in such cases (see, e.g., <span><a href="https://rfc-editor.org/rfc/rfc5116#section-5.1.1" class="relref">Section 5.1.1</a> of [<a href="#RFC5116" class="cite xref">RFC5116</a>]</span>).<a href="#section-7.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="risks-due-to-short-tags">
-<section id="section-7.6">
+<section id="section-7.5">
         <h3 id="name-risks-due-to-short-tags">
-<a href="#section-7.6" class="section-number selfRef">7.6. </a><a href="#name-risks-due-to-short-tags" class="section-name selfRef">Risks due to Short Tags</a>
+<a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-risks-due-to-short-tags" class="section-name selfRef">Risks due to Short Tags</a>
         </h3>
-<p id="section-7.6-1">The SFrame ciphersuites based on AES-CTR allow for the use of short
+<p id="section-7.5-1">The SFrame ciphersuites based on AES-CTR allow for the use of short
 authentication tags, which bring a higher risk that an attacker will be
 able to cause an SFrame receiver to accept an SFrame ciphertext of the
-attacker's choosing.<a href="#section-7.6-1" class="pilcrow">¶</a></p>
-<p id="section-7.6-2">Assuming that the authentication properties of the ciphersuite are robust, the
+attacker's choosing.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
+<p id="section-7.5-2">Assuming that the authentication properties of the ciphersuite are robust, the
 only attack that an attacker can mount is an attempt to find an acceptable
 (ciphertext, tag) combination through brute force.  Such a brute-force attack
-will have an expected sucess rate of the following form:<a href="#section-7.6-2" class="pilcrow">¶</a></p>
-<p id="section-7.6-3"><code>
+will have an expected sucess rate of the following form:<a href="#section-7.5-2" class="pilcrow">¶</a></p>
+<p id="section-7.5-3"><code>
 attacker_success_rate = attempts_per_second / 2^(8*Nt)
-</code><a href="#section-7.6-3" class="pilcrow">¶</a></p>
-<p id="section-7.6-4">For example, a gigabit ethernet connection is able to transmit roughly 2^20
+</code><a href="#section-7.5-3" class="pilcrow">¶</a></p>
+<p id="section-7.5-4">For example, a gigabit ethernet connection is able to transmit roughly 2^20
 packets per second.  If an attacker saturated such a link with guesses against a
 32-bit authentication tag (<code>Nt=4</code>), then the attacker would succeed on average
-roughly once every 2^12 seconds, or about once an hour.<a href="#section-7.6-4" class="pilcrow">¶</a></p>
-<p id="section-7.6-5">In a typical SFrame usage in a real-time media application, there are a few
-approaches to mitigating this risk:<a href="#section-7.6-5" class="pilcrow">¶</a></p>
+roughly once every 2^12 seconds, or about once an hour.<a href="#section-7.5-4" class="pilcrow">¶</a></p>
+<p id="section-7.5-5">In a typical SFrame usage in a real-time media application, there are a few
+approaches to mitigating this risk:<a href="#section-7.5-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.6-6.1">
-            <p id="section-7.6-6.1.1">Receivers only accept SFrame ciphertexts over HBH-secure channels (e.g., SRTP
+<li class="normal" id="section-7.5-6.1">
+            <p id="section-7.5-6.1.1">Receivers only accept SFrame ciphertexts over HBH-secure channels (e.g., SRTP
 security associations or QUIC connections).  So only an entity that is part of
-such a channel can mount the above attack.<a href="#section-7.6-6.1.1" class="pilcrow">¶</a></p>
+such a channel can mount the above attack.<a href="#section-7.5-6.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.6-6.2">
-            <p id="section-7.6-6.2.1">The expected packet rate for a media stream is very predictable (and typically
+          <li class="normal" id="section-7.5-6.2">
+            <p id="section-7.5-6.2.1">The expected packet rate for a media stream is very predictable (and typically
 far lower than the above example).  On the one hand, attacks at this rate will
 succeed even less often than the high-rate attack described above.  On the
 other hand, the application may use an elevated packet arrival rate as a
 signal of a brute-force attack.  This latter approach is common in other
-settings, e.g., mitigating brute-force attacks on passwords.<a href="#section-7.6-6.2.1" class="pilcrow">¶</a></p>
+settings, e.g., mitigating brute-force attacks on passwords.<a href="#section-7.5-6.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.6-6.3">
-            <p id="section-7.6-6.3.1">Media applications typically do not provide feedback to media senders as to
+          <li class="normal" id="section-7.5-6.3">
+            <p id="section-7.5-6.3.1">Media applications typically do not provide feedback to media senders as to
 which media packets failed to decrypt.  When media quality feedback
 mechanisms are used, decryption failures will typically appear as packet
-losses, but only at an aggregate level.<a href="#section-7.6-6.3.1" class="pilcrow">¶</a></p>
+losses, but only at an aggregate level.<a href="#section-7.5-6.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.6-6.4">
-            <p id="section-7.6-6.4.1">Anti-replay mechanisms (see <a href="#replay" class="auto internal xref">Section 7.5</a>) prevent the attacker from re-using
+          <li class="normal" id="section-7.5-6.4">
+            <p id="section-7.5-6.4.1">Anti-replay mechanisms (see <a href="#replay" class="auto internal xref">Section 7.4</a>) prevent the attacker from re-using
 valid ciphertexts (either observed or guessed by the attacker).  A receiver
 applying anti-replay controls will only accept one valid plaintext per CTR
 value.  Since the CTR value is covered by SFrame authentication, an attacker
@@ -2804,13 +2789,13 @@ the encrypted content is unchanged.  In other words, when the above brute
 force attack succeeds, it only allows the attacker to send a single SFrame
 ciphertext; the ciphertext cannot be reused because either it will have the
 same CTR value and be discarded as a replay, or else it will have a different
-CTR value its tag will no longer be valid.<a href="#section-7.6-6.4.1" class="pilcrow">¶</a></p>
+CTR value its tag will no longer be valid.<a href="#section-7.5-6.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-7.6-7">Nonetheless, without these mitigations, an application that makes use of short
+<p id="section-7.5-7">Nonetheless, without these mitigations, an application that makes use of short
 tags will be at heightened risk of forgery attacks.  In many cases, it is
 simpler to use full-size tags and tolerate slightly higher bandwidth usage
-rather than add the additional defenses necessary to safely use short tags.<a href="#section-7.6-7" class="pilcrow">¶</a></p>
+rather than add the additional defenses necessary to safely use short tags.<a href="#section-7.5-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2927,10 +2912,10 @@ order for SFrame to operate securely.<a href="#section-9-1" class="pilcrow">¶</
         <h3 id="name-header-value-uniqueness">
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-header-value-uniqueness" class="section-name selfRef">Header Value Uniqueness</a>
         </h3>
-<p id="section-9.1-1">Applications MUST ensure that each (KID, CTR) combination is used for exactly
-one SFrame encryption operation. Typically this is done by assigning each sender a KID
-or set of KIDs, then having each sender use the CTR field as a monotonic counter,
-incrementing for each plaintext that is encrypted. Note that in addition to its
+<p id="section-9.1-1">Applications MUST ensure that each (KID, CTR) combination is used for at most
+one SFrame encryption operation. Typically this is done by assigning each sender
+a KID or set of KIDs, then having each sender use the CTR field as a monotonic
+counter, incrementing for each plaintext that is encrypted. In addition to its
 simplicity, this scheme minimizes overhead by keeping CTR values as small as
 possible.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
 </section>
@@ -2966,7 +2951,7 @@ sender are exposed.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-9.3-1">It is the responsibility of the application to handle anti-replay. Replay by network
 attackers is assumed to be prevented by network-layer facilities (e.g., TLS, SRTP).
-As mentioned in <a href="#replay" class="auto internal xref">Section 7.5</a>, senders MUST reject requests to encrypt multiple times
+As mentioned in <a href="#replay" class="auto internal xref">Section 7.4</a>, senders MUST reject requests to encrypt multiple times
 with the same key and nonce.<a href="#section-9.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.3-2">It is not mandatory to implement anti-replay on the receiver side. Receivers MAY
 apply time or counter based anti-replay mitigations.<a href="#section-9.3-2" class="pilcrow">¶</a></p>
@@ -3041,14 +3026,6 @@ decryption has authenticated the application data.<a href="#section-9.4-2" class
         <dd>
 <span class="refAuthor">Murillo, S. G.</span> and <span class="refAuthor">A. Gouaillard</span>, <span class="refTitle">"Codec agnostic RTP payload format for video"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-codec-agnostic-rtp-payload-format-00</span>, <time datetime="2021-02-19" class="refDate">19 February 2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-codec-agnostic-rtp-payload-format-00">https://datatracker.ietf.org/doc/html/draft-codec-agnostic-rtp-payload-format-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="I-D.ietf-mls-architecture">[I-D.ietf-mls-architecture]</dt>
-        <dd>
-<span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Omara, E.</span>, <span class="refAuthor">Inguva, S.</span>, and <span class="refAuthor">A. Duric</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mls-architecture-11</span>, <time datetime="2023-07-26" class="refDate">26 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mls-architecture-11">https://datatracker.ietf.org/doc/html/draft-ietf-mls-architecture-11</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="I-D.ietf-mls-protocol">[I-D.ietf-mls-protocol]</dt>
-        <dd>
-<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mls-protocol-20</span>, <time datetime="2023-03-27" class="refDate">27 March 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20">https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="I-D.ietf-moq-transport">[I-D.ietf-moq-transport]</dt>
         <dd>
 <span class="refAuthor">Curley, L.</span>, <span class="refAuthor">Pugin, K.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-01</span>, <time datetime="2023-10-23" class="refDate">23 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-01</a>&gt;</span>. </dd>
@@ -3056,6 +3033,14 @@ decryption has authenticated the application data.<a href="#section-9.4-2" class
 <dt id="I-D.ietf-webtrans-overview">[I-D.ietf-webtrans-overview]</dt>
         <dd>
 <span class="refAuthor">Vasiliev, V.</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-06</span>, <time datetime="2023-09-06" class="refDate">6 September 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-06">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="MLS-ARCH">[MLS-ARCH]</dt>
+        <dd>
+<span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Omara, E.</span>, <span class="refAuthor">Inguva, S.</span>, and <span class="refAuthor">A. Duric</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mls-architecture-11</span>, <time datetime="2023-07-26" class="refDate">26 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mls-architecture-11">https://datatracker.ietf.org/doc/html/draft-ietf-mls-architecture-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="MLS-PROTO">[MLS-PROTO]</dt>
+        <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9420">https://www.rfc-editor.org/rfc/rfc9420</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC3711">[RFC3711]</dt>
         <dd>
@@ -3169,13 +3154,14 @@ trait SFrameContextMethods {
   fn create(cipher_suite: CipherSuite) -&gt; Self;
   fn add_send_key(&amp;self, kid: KeyId, base_key: &amp;[u8]);
   fn add_recv_key(&amp;self, kid: KeyId, base_key: &amp;[u8]);
-  fn encrypt(&amp;mut self, kid: KeyId, metadata: &amp;[u8], plaintext: &amp;[u8]) -&gt; Vec&lt;u8&gt;;
+  fn encrypt(&amp;mut self, kid: KeyId, metadata: &amp;[u8],
+             plaintext: &amp;[u8]) -&gt; Vec&lt;u8&gt;;
   fn decrypt(&amp;self, metadata: &amp;[u8], ciphertext: &amp;[u8]) -&gt; Vec&lt;u8&gt;;
 }
 </pre>
 </div>
 <figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
-<a href="#name-an-example-sframe-api" class="selfRef">An example SFrame API</a>
+<a href="#name-an-example-sframe-api" class="selfRef">An Example SFrame API</a>
         </figcaption></figure>
 </div>
 </section>
