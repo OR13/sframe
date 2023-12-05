@@ -1222,6 +1222,12 @@ Alice |          (per-frame)         (per-packet)   |        |       |
 
 10.1.  Normative References
 
+   [MLS-PROTO]
+              Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
+              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
+              Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
+              July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -1274,12 +1280,6 @@ Alice |          (per-frame)         (per-packet)   |        |       |
               ietf-mls-architecture-11, 26 July 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
               architecture-11>.
-
-   [MLS-PROTO]
-              Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
-              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
-              Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
-              July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
 
    [RFC3711]  Baugher, M., McGrew, D., Naslund, M., Carrara, E., and K.
               Norrman, "The Secure Real-time Transport Protocol (SRTP)",
