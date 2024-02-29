@@ -1780,8 +1780,8 @@ first byte is a "config byte", with the following fields:<a href="#section-4.3-5
           <dd class="break"></dd>
 <dt id="section-4.3-6.3">Key or Key Length (K, 3 bits):</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-6.4">
-            <p id="section-4.3-6.4.1">This field contains the Key ID (KID) if the X flag is set to 0, or the key id
-length, minus one, if set to 1.<a href="#section-4.3-6.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.3-6.4.1">If the X flag is set to 0, this field contains the Key ID.  If the X flag is
+set to 1, then it contains the length of the Key ID, minus one.<a href="#section-4.3-6.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.3-6.5">Extended Counter Flag (Y, 1 bit):</dt>
@@ -1945,9 +1945,9 @@ algorithm<a href="#section-4.4-2.5.1" class="pilcrow">¶</a></p>
 <p id="section-4.4.1-1">Each SFrame encryption or decryption operation is premised on a single secret
 <code>base_key</code>, which is labeled with an integer KID value signaled in the SFrame
 header.<a href="#section-4.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.4.1-2">The sender and receivers need to agree on which key should be used for a given
-KID.  Moreover, senders and receivers need to agree on whether keys will be used
-for encryption or decryption only. The process for provisioning keys and their KID
+<p id="section-4.4.1-2">The sender and receivers need to agree on which <code>base_key</code> should be used for a given
+KID.  Moreover, senders and receivers need to agree on whether a <code>base_key</code> will be used
+for encryption or decryption only. The process for provisioning <code>base_key</code> values and their KID
 values is beyond the scope of this specification, but its security properties will
 bound the assurances that SFrame provides.  For example, if SFrame is used to
 provide E2E security against intermediary media nodes, then SFrame keys need to
@@ -1959,10 +1959,10 @@ the next counter value CTR to be used when encrypting (initially 0).<a href="#se
 and the counter is incremented after successful encryption.  When decrypting,
 the <code>base_key</code> for decryption is selected from the available keys using the KID
 value in the SFrame Header.<a href="#section-4.4.1-4" class="pilcrow">¶</a></p>
-<p id="section-4.4.1-5">A given key MUST NOT be used for encryption by multiple senders.  Such reuse
+<p id="section-4.4.1-5">A given <code>base_key</code> MUST NOT be used for encryption by multiple senders.  Such reuse
 would result in multiple encrypted frames being generated with the same (key,
 nonce) pair, which harms the protections provided by many AEAD algorithms.
-Implementations MUST mark each key as usable for encryption or decryption,
+Implementations MUST mark each <code>base_key</code> as usable for encryption or decryption,
 never both.<a href="#section-4.4.1-5" class="pilcrow">¶</a></p>
 <p id="section-4.4.1-6">Note that the set of available keys might change over the lifetime of a
 real-time session.  In such cases, the client will need to manage key usage to
@@ -1977,7 +1977,7 @@ all receivers have acknowledged receipt of the new key or (b) a timeout expires.
           <h4 id="name-key-derivation">
 <a href="#section-4.4.2" class="section-number selfRef">4.4.2. </a><a href="#name-key-derivation" class="section-name selfRef">Key Derivation</a>
           </h4>
-<p id="section-4.4.2-1">SFrame encrytion and decryption use a key and salt derived from the <code>base_key</code>
+<p id="section-4.4.2-1">SFrame encryption and decryption use a key and salt derived from the <code>base_key</code>
 associated to a KID.  Given a <code>base_key</code> value, the key and salt are derived
 using HKDF <span>[<a href="#RFC5869" class="cite xref">RFC5869</a>]</span> as follows:<a href="#section-4.4.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.4.2-2">
@@ -2028,9 +2028,13 @@ with application-provided metadata about the encrypted media (see <a href="#meta
 def encrypt(CTR, KID, metadata, plaintext):
   sframe_key, sframe_salt = key_store[KID]
 
+  # encode_big_endian(x, n) produces an n-byte string encoding the integer x in
+  # big-endian byte order.
   ctr = encode_big_endian(CTR, AEAD.Nn)
   nonce = xor(sframe_salt, CTR)
 
+  # encode_sframe_header produces a byte string encoding the provided KID and
+  # CTR values into an SFrame Header.
   header = encode_sframe_header(CTR, KID)
   aad = header + metadata
 
