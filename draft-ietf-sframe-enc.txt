@@ -5,14 +5,14 @@
 Network Working Group                                           E. Omara
 Internet-Draft                                                     Apple
 Intended status: Standards Track                               J. Uberti
-Expires: 7 June 2024                                              Google
+Expires: 1 September 2024                                         Google
                                                               S. Murillo
                                                           CoSMo Software
                                                        R. L. Barnes, Ed.
                                                                    Cisco
                                                                Y. Fablet
                                                                    Apple
-                                                         5 December 2023
+                                                        29 February 2024
 
 
                          Secure Frame (SFrame)
@@ -63,11 +63,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 June 2024.
+   This Internet-Draft will expire on 1 September 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -468,7 +468,7 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    A given key MUST NOT be used for encryption by multiple senders.
    Such reuse would result in multiple encrypted frames being generated
    with the same (key, nonce) pair, which harms the protections provided
-   by many AEAD algorithms.  Implementations SHOULD mark each key as
+   by many AEAD algorithms.  Implementations MUST mark each key as
    usable for encryption or decryption, never both.
 
    Note that the set of available keys might change over the lifetime of
@@ -1054,9 +1054,9 @@ Alice |          (per-frame)         (per-packet)   |        |       |
    a few approaches to mitigating this risk:
 
    *  Receivers only accept SFrame ciphertexts over HBH-secure channels
-      (e.g., SRTP security associations or QUIC connections).  So only
-      an entity that is part of such a channel can mount the above
-      attack.
+      (e.g., SRTP security associations or QUIC connections).  If this
+      is the case, only an entity that is part of such a channel can
+      mount the above attack.
 
    *  The expected packet rate for a media stream is very predictable
       (and typically far lower than the above example).  On the one
@@ -1093,12 +1093,12 @@ Alice |          (per-frame)         (per-packet)   |        |       |
 8.  IANA Considerations
 
    This document requests the creation of the following new IANA
-   registries:
+   registry:
 
    *  SFrame Cipher Suites (Section 8.1)
 
-   This registries should be under a heading of "SFrame", and
-   assignments are made via the Specification Required policy [RFC8126].
+   This registry should be under a heading of "SFrame", and assignments
+   are made via the Specification Required policy [RFC8126].
 
    RFC EDITOR: Please replace XXXX throughout with the RFC number
    assigned to this document
@@ -1115,7 +1115,7 @@ Alice |          (per-frame)         (per-packet)   |        |       |
 
    *  Name: The name of the cipher suite
 
-   *  Reference: The document where this wire format is defined
+   *  Reference: The document where this cipher suite is defined
 
    Initial contents:
 
@@ -1192,6 +1192,9 @@ Alice |          (per-frame)         (per-packet)   |        |       |
 
    It is not mandatory to implement anti-replay on the receiver side.
    Receivers MAY apply time or counter based anti-replay mitigations.
+   For example, Section 3.3.2 of [RFC3711] specifies a counter-based
+   anti-replay mitigation, which could be adapted to use with SFrame,
+   using the CTR field as the counter.
 
 9.4.  Metadata
 
@@ -1261,11 +1264,11 @@ Alice |          (per-frame)         (per-packet)   |        |       |
               draft-codec-agnostic-rtp-payload-format-00>.
 
    [I-D.ietf-moq-transport]
-              Curley, L., Pugin, K., Nandakumar, S., and V. Vasiliev,
-              "Media over QUIC Transport", Work in Progress, Internet-
-              Draft, draft-ietf-moq-transport-01, 23 October 2023,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
-              transport-01>.
+              Curley, L., Pugin, K., Nandakumar, S., Vasiliev, V., and
+              I. Swett, "Media over QUIC Transport", Work in Progress,
+              Internet-Draft, draft-ietf-moq-transport-02, 24 January
+              2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              moq-transport-02>.
 
    [I-D.ietf-webtrans-overview]
               Vasiliev, V., "The WebTransport Protocol Framework", Work
