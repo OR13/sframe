@@ -1910,7 +1910,7 @@ This allows a 3-bit length field to represent the value lengths 1-8.<a href="#se
         </h3>
 <p id="section-4.4-1">SFrame encryption uses an AEAD encryption algorithm and hash function defined by
 the cipher suite in use (see <a href="#cipher-suites" class="auto internal xref">Section 4.5</a>).  We will refer to the following
-aspects of the AEAD algorithm below:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+aspects of the AEAD and the hash algorithm below:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.4-2.1">
             <p id="section-4.4-2.1.1"><code>AEAD.Encrypt</code> and <code>AEAD.Decrypt</code> - The encryption and decryption functions
@@ -1927,6 +1927,14 @@ opposed to a separate field as in SRTP <span>[<a href="#RFC3711" class="cite xre
           <li class="normal" id="section-4.4-2.4">
             <p id="section-4.4-2.4.1"><code>AEAD.Nt</code> - The overhead in bytes of the encryption algorithm (typically the
 size of a "tag" that is added to the plaintext)<a href="#section-4.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-2.5">
+            <p id="section-4.4-2.5.1"><code>AEAD.Nka</code> - For cipher suites using the compound AEAD described in
+<a href="#aes-ctr-with-sha2" class="auto internal xref">Section 4.5.1</a>, the size in bytes of a key for the underlying AES-CTR
+algorithm<a href="#section-4.4-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-2.6">
+            <p id="section-4.4-2.6.1"><code>Hash.Nh</code> - The size in bytes of the output of the hash function<a href="#section-4.4-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div id="key-selection">
@@ -2246,6 +2254,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Name</th>
               <th class="text-left" rowspan="1" colspan="1">Nh</th>
+              <th class="text-left" rowspan="1" colspan="1">Nka</th>
               <th class="text-left" rowspan="1" colspan="1">Nk</th>
               <th class="text-left" rowspan="1" colspan="1">Nn</th>
               <th class="text-left" rowspan="1" colspan="1">Nt</th>
@@ -2257,6 +2266,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
                 <code>AES_128_CTR_HMAC_SHA256_80</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">32</td>
+              <td class="text-left" rowspan="1" colspan="1">16</td>
               <td class="text-left" rowspan="1" colspan="1">48</td>
               <td class="text-left" rowspan="1" colspan="1">12</td>
               <td class="text-left" rowspan="1" colspan="1">10</td>
@@ -2266,6 +2276,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
                 <code>AES_128_CTR_HMAC_SHA256_64</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">32</td>
+              <td class="text-left" rowspan="1" colspan="1">16</td>
               <td class="text-left" rowspan="1" colspan="1">48</td>
               <td class="text-left" rowspan="1" colspan="1">12</td>
               <td class="text-left" rowspan="1" colspan="1">8</td>
@@ -2275,6 +2286,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
                 <code>AES_128_CTR_HMAC_SHA256_32</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">32</td>
+              <td class="text-left" rowspan="1" colspan="1">16</td>
               <td class="text-left" rowspan="1" colspan="1">48</td>
               <td class="text-left" rowspan="1" colspan="1">12</td>
               <td class="text-left" rowspan="1" colspan="1">4</td>
@@ -2284,6 +2296,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
                 <code>AES_128_GCM_SHA256_128</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">32</td>
+              <td class="text-left" rowspan="1" colspan="1">n/a</td>
               <td class="text-left" rowspan="1" colspan="1">16</td>
               <td class="text-left" rowspan="1" colspan="1">12</td>
               <td class="text-left" rowspan="1" colspan="1">16</td>
@@ -2293,6 +2306,7 @@ with a truncated authentication tag<a href="#section-4.5-2.2.1" class="pilcrow">
                 <code>AES_256_GCM_SHA512_128</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">64</td>
+              <td class="text-left" rowspan="1" colspan="1">n/a</td>
               <td class="text-left" rowspan="1" colspan="1">32</td>
               <td class="text-left" rowspan="1" colspan="1">12</td>
               <td class="text-left" rowspan="1" colspan="1">16</td>
@@ -2747,6 +2761,10 @@ the receiver will be able to decrypt it, but not decode it.<a href="#section-6.2
 policies, that new key frame could take some time to be generated.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-4">If the sender sends a key frame after the new E2EE key is in use, the time
 required for the new participant to display the video is minimized.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.2-5">Note that this issue does not arise for media streams that do not have
+dependencies among frames, e.g., audio streams.  In these streams, each frame is
+independently decodeable, so there is never a need to process two frames
+together which might be on two sides of a key rotation.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="partial-decoding">
@@ -2926,6 +2944,11 @@ suites are in the range 0x0000 to 0xFFFF.<a href="#section-8.1-1" class="pilcrow
           </thead>
           <tbody>
             <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x0000</td>
+              <td class="text-left" rowspan="1" colspan="1">Reserved</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC XXXX</td>
+            </tr>
+            <tr>
               <td class="text-left" rowspan="1" colspan="1">0x0001</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>AES_128_CTR_HMAC_SHA256_80</code>
@@ -2982,6 +3005,17 @@ encryption and decryption operations, and how SFrame ciphertexts are delivered
 from sender to receiver (including any fragmentation and reassembly).  In this
 section, we lay out additional requirements that an integration must meet in
 order for SFrame to operate securely.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">In general, an application using SFrame is responsible for configuring SFrame.
+The application must first define when SFrame is applied at all.  When SFrame is
+applied, the application must define which cipher suite is to be used.  If new
+versions of SFrame are defined in the future, it will be up to the application
+to determine which version should be used.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-3">This division of responsibilities is similar to the way other media parameters
+(e.g., codecs) are typically handled in media applications, in the sense that
+they are set up in some signaling protocol, and then not described in the media.
+Applications might find it useful to extend the protocols used for negotiating
+other media parameters (e.g., SDP <span>[<a href="#RFC4566" class="cite xref">RFC4566</a>]</span>) to also negotiate parameters for
+SFrame.<a href="#section-9-3" class="pilcrow">¶</a></p>
 <div id="header-value-uniqueness">
 <section id="section-9.1">
         <h3 id="name-header-value-uniqueness">
